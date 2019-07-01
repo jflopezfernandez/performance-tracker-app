@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
+
 public class MainActivity extends AppCompatActivity {
 
     // UI Controls
@@ -23,14 +28,14 @@ public class MainActivity extends AppCompatActivity {
     TextView labelSessionTotal;
 
     // Stat variables
-    int currentStreak;
-    int streaks;
-    int longestStreak;
-    int successfulRepetitions;
-    int sessionTotal;
+    BigInteger currentStreak;
+    BigInteger streaks;
+    BigInteger longestStreak;
+    BigInteger successfulRepetitions;
+    BigInteger sessionTotal;
 
-    double successRate;
-    double averageStreakLength;
+    BigDecimal successRate;
+    BigDecimal averageStreakLength;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,22 +82,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         labelCurrentStreak = (TextView) findViewById(R.id.label_current_streak);
-        updateCurrentStreakLabel();
+        //updateCurrentStreakLabel();
 
         labelSuccessRate = (TextView) findViewById(R.id.label_session_success_rate_value);
-        updateSuccessRateLabel();
+        //updateSuccessRateLabel();
 
         labelStreaks = (TextView) findViewById(R.id.label_streaks_count);
-        updateStreaksLabel();
+        //updateStreaksLabel();
 
         labelLongestStreak = (TextView) findViewById(R.id.label_longest_streak_count);
-        updateLongestStreakLabel();
+        //updateLongestStreakLabel();
 
         labelAverageStreakLength = (TextView) findViewById(R.id.label_average_streak_length_value);
-        updateAverageStreakLengthLabel();
+        //updateAverageStreakLengthLabel();
 
         labelSessionTotal = (TextView) findViewById(R.id.label_session_total_count);
-        updateCurrentSessionTotalLabel();
+        //updateCurrentSessionTotalLabel();
     }
 
     /* Repetition-related functions */
@@ -117,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         incrementCurrentStreakLength();
 
         // // If the current streak is a new record, replace the record with the current streak
-        if (currentStreak > longestStreak) {
+        if (currentStreakIsLongerThanCurrentRecord()) {
             longestStreak = currentStreak;
 
             // Show toast notification congratulating user
@@ -129,46 +134,54 @@ public class MainActivity extends AppCompatActivity {
         // Only increment the streak count if the current streak is at least 1 successful rep long.
         // Otherwise, there have been no successful repetitions this streak and is therefore not
         // actually a streak.
-        if (currentStreak > 0) {
+        if (currentStreakIsGreaterThanZero()) {
             incrementStreakCount();
             resetCurrentStreak();
         }
     }
 
     private void incrementCurrentStreakLength() {
-        currentStreak += 1;
+        currentStreak = currentStreak.add(BigInteger.ONE);
     }
 
     private void incrementTotalSuccessfulRepetitions() {
-        successfulRepetitions += 1;
+        successfulRepetitions = successfulRepetitions.add(BigInteger.ONE);
     }
 
     private void incrementTotalRepetitions() {
-        sessionTotal += 1;
+        sessionTotal = sessionTotal.add(BigInteger.ONE);
     }
 
     private void incrementStreakCount() {
-        streaks += 1;
+        streaks = streaks.add(BigInteger.ONE);
     }
 
     private void resetCurrentStreak() {
-        currentStreak = 0;
+        currentStreak = BigInteger.ZERO;
     }
 
     private void resetStreakCount() {
-        streaks = 0;
+        streaks = BigInteger.ZERO;
     }
 
     private void resetLongestStreak() {
-        longestStreak = 0;
+        longestStreak = BigInteger.ZERO;
     }
 
     private void resetSuccessfulRepetitions() {
-        successfulRepetitions = 0;
+        successfulRepetitions = BigInteger.ZERO;
     }
 
     private void resetSessionTotal() {
-        sessionTotal = 0;
+        sessionTotal = BigInteger.ZERO;
+    }
+
+    private boolean currentStreakIsGreaterThanZero() {
+        return (currentStreak.compareTo(BigInteger.ZERO) > 0);
+    }
+
+    private boolean currentStreakIsLongerThanCurrentRecord() {
+        return (currentStreak.compareTo(longestStreak) > 0);
     }
 
     /* Session statistics update functions */
@@ -178,11 +191,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateSuccessRate() {
-        successRate = (double) successfulRepetitions / (double) sessionTotal;
+        if (sessionTotal.compareTo(BigInteger.ZERO) == 0) {
+            successRate = BigDecimal.ZERO;
+            return;
+        }
+
+        successRate = (new BigDecimal(successfulRepetitions, MathContext.UNLIMITED)).setScale(4, RoundingMode.HALF_UP).divide(new BigDecimal(sessionTotal, MathContext.UNLIMITED).setScale(4, RoundingMode.HALF_UP), RoundingMode.HALF_UP);
     }
 
     private void updateAverageStreakLength() {
-        averageStreakLength = (double) successfulRepetitions / (double) streaks;
+        if (streaks.compareTo(BigInteger.ZERO) == 0) {
+            averageStreakLength = BigDecimal.ZERO;
+            return;
+        }
+
+        averageStreakLength = (new BigDecimal(successfulRepetitions, MathContext.UNLIMITED)).setScale(2, RoundingMode.HALF_UP).divide(new BigDecimal(streaks, MathContext.UNLIMITED).setScale(2, RoundingMode.HALF_UP), RoundingMode.HALF_UP);
     }
 
     private void resetCurrentSession() {
@@ -211,26 +234,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateCurrentStreakLabel() {
-        labelCurrentStreak.setText(Integer.toString(currentStreak));
+        labelCurrentStreak.setText(String.format("%s", currentStreak));
     }
 
     private void updateSuccessRateLabel() {
-        labelSuccessRate.setText(String.format("%.4f", successRate));
+        labelSuccessRate.setText(String.format("%s", successRate));
     }
 
     private void updateStreaksLabel() {
-        labelStreaks.setText(String.format("%d", streaks));
+        labelStreaks.setText(String.format("%s", streaks));
     }
 
     private void updateLongestStreakLabel() {
-        labelLongestStreak.setText(String.format("%d", longestStreak));
+        labelLongestStreak.setText(String.format("%s", longestStreak));
     }
 
     private void updateAverageStreakLengthLabel() {
-        labelAverageStreakLength.setText(String.format("%.2f", averageStreakLength));
+        labelAverageStreakLength.setText(String.format("%s", averageStreakLength));
     }
 
     private void updateCurrentSessionTotalLabel() {
-        labelSessionTotal.setText(Integer.toString(sessionTotal));
+        labelSessionTotal.setText(String.format("%s", sessionTotal));
     }
 }
