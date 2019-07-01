@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name" translatable="true">Performance Tracker</string>
+    <string name="label_success" translatable="true">Success</string>
+    <string name="label_failure" translatable="true">Failure</string>
+    <string name="label_reset" translatable="true">Reset</string>
+    <string name="label_plus" translatable="false">+</string>
+    <string name="label_minus" translatable="false">-</string>
+    <string name="label_value_zero" translatable="false">0</string>
+    <string name="label_value_zero_f">0.0</string>
+    <string name="label_session_total">Session Total:</string>
+    <string name="label_session_success_rate">Success Rate:</string>
+    <string name="label_longest_streak">Longest Streak:</string>
+    <string name="label_average_streak_length">Average Streak Length:</string>
+</resources>
