@@ -7,8 +7,12 @@
     <string name="label_minus" translatable="false">-</string>
     <string name="label_value_zero" translatable="false">0</string>
     <string name="label_value_zero_f">0.0</string>
-    <string name="label_session_total">Session Total:</string>
+    <string name="label_session_total">Total Repetitions:</string>
     <string name="label_session_success_rate">Success Rate:</string>
     <string name="label_longest_streak">Longest Streak:</string>
     <string name="label_average_streak_length">Average Streak Length:</string>
+    <string name="label_streaks">Total Streaks:</string>
+    <string name="label_successful_repetitions">Successful Repetitions:</string>
+    <string name="label_streak_standard_deviation">Standard Deviation:</string>
+    <string name="button_save_session_data">Save Session Data</string>
 </resources>
